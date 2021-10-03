@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react"
+import { fetchWeather } from "./api/fetchWeather"
+import "./App.css"
 
-function App() {
+const App = () => {
+  const [query, setquery] = useState("")
+  const [weatherData, setweatherData] = useState({})
+
+  const onEnterSearch = async (e) => {
+    if (e.key === "Enter") {
+      const data = await fetchWeather(query)
+      setweatherData(data)
+      setquery("")
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main-container">
+      <h1 style={{ color: "#fff" }}>Search Weather</h1>
+      <input
+        type="text"
+        className="search"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setquery(e.target.value)}
+        onKeyPress={onEnterSearch}
+      />
+      {weatherData.main && (
+        <div className="city">
+          <h2 className="city-name">
+            <span>{weatherData.name}</span>
+            <sup>{weatherData.sys.country}</sup>
+          </h2>
+          <div className="city-temp">
+            {Math.round(weatherData.main.temp)}
+            <sup>&deg;C</sup>
+          </div>
+          <div className="info">
+            <img
+              src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+              alt={weatherData.weather[0].description}
+              className="city-icon"
+            />
+            <p>{weatherData.weather[0].description}</p>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
