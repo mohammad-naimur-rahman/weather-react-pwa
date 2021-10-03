@@ -1,22 +1,30 @@
-import React, { useState } from "react"
-import { fetchWeather } from "./api/fetchWeather"
-import "./App.css"
+import React, { useState } from 'react'
+import { fetchWeather } from './api/fetchWeather'
+import './App.css'
+import { useInstallPWA } from './hooks/useInstallPWA'
 
 const App = () => {
-  const [query, setquery] = useState("")
+  const [query, setquery] = useState('')
   const [weatherData, setweatherData] = useState({})
 
+  const [supportsPWA, installPWA] = useInstallPWA()
+
   const onEnterSearch = async (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       const data = await fetchWeather(query)
       setweatherData(data)
-      setquery("")
+      setquery('')
     }
   }
 
   return (
     <div className="main-container">
-      <h1 style={{ color: "#fff" }}>Search Weather</h1>
+      <h1 style={{ color: '#fff' }}>Search Weather</h1>
+      {supportsPWA && (
+        <p onClick={installPWA} style={{ color: '#fff', cursor: 'pointer' }}>
+          Install Application
+        </p>
+      )}
       <input
         type="text"
         className="search"
